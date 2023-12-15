@@ -2,13 +2,15 @@ def _conan_build_repo_impl(ctx):
     # We create a separate conan user home for each conan command to make it more deterministic
     conan_user_home = str(ctx.path(".").dirname) + "/" + ctx.name
 
-    pkg_path = ctx.attr.conan_package
+    pkg = ctx.attr.conan_package
+    conan_pkg_path = ctx.workspace_root.get_child(pkg.package)
+    print(conan_pkg_path)
 
     ctx.execute(
         [
             "conan",
             "install",
-            pkg_path,
+            conan_pkg_path,
         ],
         quiet = False,
         environment = {
@@ -21,6 +23,7 @@ conan_build_repo = repository_rule(
     attrs = {
         "conan_package": attr.label(
             mandatory = True,
+            allow_files = True,
             doc = "A package containing a conan package.",
         ),
     },
