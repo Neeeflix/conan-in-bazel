@@ -1,0 +1,4 @@
+/bazel-*
+.idea/
+.venv/
+MODULE.bazel*
