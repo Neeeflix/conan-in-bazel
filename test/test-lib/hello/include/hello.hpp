@@ -1,4 +1,4 @@
-class Hello {
+class HelloLib {
     public:
         static int number();
 };

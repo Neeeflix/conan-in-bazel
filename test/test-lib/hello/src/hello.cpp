@@ -1,6 +1,6 @@
 #include "hello.hpp"
 
-static int Hello::number()
+int HelloLib::number()
 {
     return 42;
 }

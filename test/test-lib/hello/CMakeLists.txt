@@ -1,4 +1,11 @@
-add_library(hello STATIC
+project("hello-lib")
+
+add_library(${PROJECT_NAME} STATIC
     "src/hello.cpp"
-    "include/hello.hpp"
+)
+
+target_include_directories(
+    ${PROJECT_NAME}
+    PUBLIC
+    "include"
 )

@@ -7,10 +7,10 @@ class HelloWorldConan(ConanFile):
     license = "MIT"
     author = "Johannes Wendel johanneswendel9@gmail.com"
     description = "This is just a simple library for testing usage"
-    settings = "os", "gcc", "release", "amd64"
-    options = {"shared": [True, False], "fPIC": [True, False]}
-    default_options = {"shared": False, "fPIC": True}
-    generators = "cmake"
+    settings = "os"
+    options = {"shared": [True, False]}
+    default_options = {"shared": False}
+    generators = "BazelDeps"
 
     def config_options(self):
         if self.settings.os == "Windows":
