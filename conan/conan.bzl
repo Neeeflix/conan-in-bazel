@@ -53,12 +53,19 @@ def _conan_build_repo_impl(ctx):
         conan_user_home,
     )
 
+    conanfile_path = ctx.path(".").get_child(ctx.name + "_conanfile.txt")
+    ctx.file(
+        conanfile_path,
+        content = """[requires]
+{}
+""".format("\n".join(ctx.attr.conan_deps)),
+    )
+
     _exec_conan(
         ctx,
         [
             "install",
-            #TODO: make this a parameter to be passe dto the rule
-            str(ctx.path(Label(":conanfile.txt"))),
+            str(conanfile_path),
             "--install-folder",
             str(ctx.path(".")),  # This is a bit of a hack to make conan install the package into the folder as the name is
             "--generator=BazelDeps",
@@ -74,6 +81,10 @@ conan_build_repo = repository_rule(
             mandatory = True,
             allow_files = True,
             doc = "A package containing a conan package.",
+        ),
+        "conan_deps": attr.string_list(
+            mandatory = True,
+            doc = "A list of conan dependencies to be installed. The syntax of dependencies is equivalnet to the syntax in a regular    conanfile.txt",
         ),
         "version": attr.string(
             mandatory = True,
