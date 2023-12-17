@@ -1,6 +1,6 @@
-load("//conan:conan.bzl", "conan_build_repo")
+load("//conan:conan.bzl", "conan_install")
 
-conan_build_repo(
+conan_install(
     name = "hello",
     conan_deps = [
         "hello-world/0.0.1",

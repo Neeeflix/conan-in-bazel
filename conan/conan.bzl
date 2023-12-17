@@ -46,7 +46,7 @@ def _build_local_conan_packages(ctx, conan_user_home):
             conan_user_home,
         )
 
-def _conan_build_repo_impl(ctx):
+def _conan_install_impl(ctx):
     # We create a separate conan user home for each conan command to make it more deterministic
     conan_user_home = str(ctx.path(".").get_child("conan_user_home"))
 
@@ -78,8 +78,8 @@ def _conan_build_repo_impl(ctx):
         conan_user_home,
     )
 
-conan_build_repo = repository_rule(
-    implementation = _conan_build_repo_impl,
+conan_install = repository_rule(
+    implementation = _conan_install_impl,
     attrs = {
         "local_conan_packages": attr.string_list(
             mandatory = False,
