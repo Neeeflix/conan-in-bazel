@@ -1,3 +1,12 @@
+def _exec_conan(ctx, params, conan_user_home):
+    ctx.execute(
+        ["conan"] + params,
+        quiet = False,
+        environment = {
+            "CONAN_USER_HOME": conan_user_home,
+        },
+    )
+
 def _conan_build_repo_impl(ctx):
     # We create a separate conan user home for each conan command to make it more deterministic
     conan_user_home = str(ctx.path(".").get_child("conan_user_home"))
@@ -7,23 +16,20 @@ def _conan_build_repo_impl(ctx):
     pkg = ctx.attr.conan_package
     conan_pkg_path = ctx.workspace_root.get_child(pkg.package)
 
-    ctx.execute(
+    _exec_conan(
+        ctx,
         [
-            "conan",
             "install",
             conan_pkg_path,
             "--install-folder",
             conan_build_folder,
         ],
-        quiet = False,
-        environment = {
-            "CONAN_USER_HOME": conan_user_home,
-        },
+        conan_user_home,
     )
 
-    ctx.execute(
+    _exec_conan(
+        ctx,
         [
-            "conan",
             "build",
             conan_pkg_path,
             "--build-folder",
@@ -31,36 +37,27 @@ def _conan_build_repo_impl(ctx):
             "--install-folder",
             conan_build_folder,
         ],
-        quiet = False,
-        environment = {
-            "CONAN_USER_HOME": conan_user_home,
-        },
+        conan_user_home,
     )
 
-    ctx.execute(
+    _exec_conan(
+        ctx,
         [
-            "conan",
             "export-pkg",
             conan_pkg_path,
         ],
-        quiet = False,
-        environment = {
-            "CONAN_USER_HOME": conan_user_home,
-        },
+        conan_user_home,
     )
 
-    ctx.execute(
+    _exec_conan(
+        ctx,
         [
-            "conan",
             "install",
             str(ctx.path(Label(":conanfile.txt"))),
             "--install-folder",
             conan_install_folder,
         ],
-        quiet = False,
-        environment = {
-            "CONAN_USER_HOME": conan_user_home,
-        },
+        conan_user_home,
     )
 
 conan_build_repo = repository_rule(
