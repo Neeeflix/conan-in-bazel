@@ -7,18 +7,11 @@ def _exec_conan(ctx, params, conan_user_home):
         },
     )
 
-def _conan_build_repo_impl(ctx):
-    # We create a separate conan user home for each conan command to make it more deterministic
-    conan_user_home = str(ctx.path(".").get_child("conan_user_home"))
+def _build_local_conan_package(ctx, conan_user_home):
     conan_build_folder = str(ctx.path("CONAN_BUILD_FOLDER"))
 
     pkg = ctx.attr.conan_package
     conan_pkg_path = ctx.workspace_root.get_child(pkg.package)
-
-    ctx.file(
-        "MODULE.bzl",
-        content = "module(name = \"{}\", version = \"{}\")\n".format(ctx.name, ctx.attr.version),
-    )
 
     _exec_conan(
         ctx,
@@ -51,6 +44,17 @@ def _conan_build_repo_impl(ctx):
             conan_pkg_path,
         ],
         conan_user_home,
+    )
+
+def _conan_build_repo_impl(ctx):
+    # We create a separate conan user home for each conan command to make it more deterministic
+    conan_user_home = str(ctx.path(".").get_child("conan_user_home"))
+
+    _build_local_conan_package(ctx, conan_user_home)
+
+    ctx.file(
+        "MODULE.bzl",
+        content = "module(name = \"{}\", version = \"{}\")\n".format(ctx.name, ctx.attr.version),
     )
 
     conanfile_path = ctx.path(".").get_child(ctx.name + "_conanfile.txt")
