@@ -16,13 +16,9 @@ def _conan_build_repo_impl(ctx):
     pkg = ctx.attr.conan_package
     conan_pkg_path = ctx.workspace_root.get_child(pkg.package)
 
-    ctx.template(
+    ctx.file(
         "MODULE.bzl",
-        str(ctx.path(Label(":templates/module.bzl.in"))),
-        substitutions = {
-            "@NAME@": ctx.name,
-            "@VERSION@": ctx.attr.version,
-        },
+        content = "module(name = \"{}\", version = \"{}\")\n".format(ctx.name, ctx.attr.version),
     )
 
     _exec_conan(
