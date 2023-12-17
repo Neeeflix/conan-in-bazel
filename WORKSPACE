@@ -5,6 +5,8 @@ conan_build_repo(
     conan_deps = [
         "hello-world/0.0.1",
     ],
-    conan_package = "//test/test-lib:package",
+    local_conan_packages = [
+        "test/test-lib",
+    ],
     version = "0.0.1",
 )

@@ -7,50 +7,50 @@ def _exec_conan(ctx, params, conan_user_home):
         },
     )
 
-def _build_local_conan_package(ctx, conan_user_home):
+def _build_local_conan_packages(ctx, conan_user_home):
     conan_build_folder = str(ctx.path("CONAN_BUILD_FOLDER"))
 
-    pkg = ctx.attr.conan_package
-    conan_pkg_path = ctx.workspace_root.get_child(pkg.package)
+    for pkg in ctx.attr.local_conan_packages:
+        conan_pkg_path = ctx.workspace_root.get_child(pkg)
 
-    _exec_conan(
-        ctx,
-        [
-            "install",
-            conan_pkg_path,
-            "--install-folder",
-            conan_build_folder,
-        ],
-        conan_user_home,
-    )
+        _exec_conan(
+            ctx,
+            [
+                "install",
+                conan_pkg_path,
+                "--install-folder",
+                conan_build_folder,
+            ],
+            conan_user_home,
+        )
 
-    _exec_conan(
-        ctx,
-        [
-            "build",
-            conan_pkg_path,
-            "--build-folder",
-            conan_build_folder,
-            "--install-folder",
-            conan_build_folder,
-        ],
-        conan_user_home,
-    )
+        _exec_conan(
+            ctx,
+            [
+                "build",
+                conan_pkg_path,
+                "--build-folder",
+                conan_build_folder,
+                "--install-folder",
+                conan_build_folder,
+            ],
+            conan_user_home,
+        )
 
-    _exec_conan(
-        ctx,
-        [
-            "export-pkg",
-            conan_pkg_path,
-        ],
-        conan_user_home,
-    )
+        _exec_conan(
+            ctx,
+            [
+                "export-pkg",
+                conan_pkg_path,
+            ],
+            conan_user_home,
+        )
 
 def _conan_build_repo_impl(ctx):
     # We create a separate conan user home for each conan command to make it more deterministic
     conan_user_home = str(ctx.path(".").get_child("conan_user_home"))
 
-    _build_local_conan_package(ctx, conan_user_home)
+    _build_local_conan_packages(ctx, conan_user_home)
 
     ctx.file(
         "MODULE.bzl",
@@ -81,10 +81,9 @@ def _conan_build_repo_impl(ctx):
 conan_build_repo = repository_rule(
     implementation = _conan_build_repo_impl,
     attrs = {
-        "conan_package": attr.label(
-            mandatory = True,
-            allow_files = True,
-            doc = "A package containing a conan package.",
+        "local_conan_packages": attr.string_list(
+            mandatory = False,
+            doc = "Paths to conan local packages. The packages will be built using conan build.",
         ),
         "conan_deps": attr.string_list(
             mandatory = True,
