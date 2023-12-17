@@ -16,6 +16,11 @@ def _conan_build_repo_impl(ctx):
     pkg = ctx.attr.conan_package
     conan_pkg_path = ctx.workspace_root.get_child(pkg.package)
 
+    ctx.template(
+        "MODULE.bzl",
+        str(ctx.path(Label(":templates/module.bzl.in"))),
+    )
+
     _exec_conan(
         ctx,
         [
@@ -53,6 +58,7 @@ def _conan_build_repo_impl(ctx):
         ctx,
         [
             "install",
+            #TODO: make this a parameter to be passe dto the rule
             str(ctx.path(Label(":conanfile.txt"))),
             "--install-folder",
             conan_install_folder,
