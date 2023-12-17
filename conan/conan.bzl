@@ -19,6 +19,10 @@ def _conan_build_repo_impl(ctx):
     ctx.template(
         "MODULE.bzl",
         str(ctx.path(Label(":templates/module.bzl.in"))),
+        substitutions = {
+            "@NAME@": ctx.name,
+            "@VERSION@": ctx.attr.version,
+        },
     )
 
     _exec_conan(
@@ -73,6 +77,10 @@ conan_build_repo = repository_rule(
             mandatory = True,
             allow_files = True,
             doc = "A package containing a conan package.",
+        ),
+        "version": attr.string(
+            mandatory = True,
+            doc = "Version of the conan package",
         ),
     },
     environ = [
