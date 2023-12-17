@@ -4,6 +4,6 @@ cc_test(
         "src/main.cpp",
     ],
     deps = [
-        "@hello",
+        "@hello//hello-world",
     ],
 )

@@ -10,7 +10,6 @@ class HelloWorldConan(ConanFile):
     settings = "os"
     options = {"shared": [True, False]}
     default_options = {"shared": False}
-    generators = "BazelDeps"
 
     def config_options(self):
         if self.settings.os == "Windows":
@@ -22,7 +21,7 @@ class HelloWorldConan(ConanFile):
         cmake.build()
 
     def package(self):
-        self.copy("*.h", dst="include", src="hello")
+        self.copy("*.hpp", src="hello")
         self.copy("*hello.lib", dst="lib", keep_path=False)
         self.copy("*.dll", dst="bin", keep_path=False)
         self.copy("*.so", dst="lib", keep_path=False)
@@ -30,5 +29,5 @@ class HelloWorldConan(ConanFile):
         self.copy("*.a", dst="lib", keep_path=False)
 
     def package_info(self):
-        self.cpp_info.libs = ["hello"]
+        self.cpp_info.libs = ["hello-lib"]
 

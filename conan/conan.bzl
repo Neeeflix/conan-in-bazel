@@ -11,7 +11,6 @@ def _conan_build_repo_impl(ctx):
     # We create a separate conan user home for each conan command to make it more deterministic
     conan_user_home = str(ctx.path(".").get_child("conan_user_home"))
     conan_build_folder = str(ctx.path("CONAN_BUILD_FOLDER"))
-    conan_install_folder = str(ctx.path("install"))
 
     pkg = ctx.attr.conan_package
     conan_pkg_path = ctx.workspace_root.get_child(pkg.package)
@@ -61,7 +60,9 @@ def _conan_build_repo_impl(ctx):
             #TODO: make this a parameter to be passe dto the rule
             str(ctx.path(Label(":conanfile.txt"))),
             "--install-folder",
-            conan_install_folder,
+            str(ctx.path(".")),  # This is a bit of a hack to make conan install the package into the folder as the name is
+            "--generator=BazelDeps",
+            "--generator=deploy",
         ],
         conan_user_home,
     )
