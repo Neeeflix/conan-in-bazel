@@ -5,5 +5,6 @@
 int main()
 {
     std::cout << "hello world" << std::endl;
-    exit(HelloLib::number() == 42);
+    if(HelloLib::number() != 42)
+        exit(1);
 }
